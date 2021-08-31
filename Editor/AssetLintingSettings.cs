@@ -139,8 +139,9 @@ namespace Ninito.UnityProjectLinter.LintingRules
                 return false;
             }
 
-            return NamingRules.Any(rule =>
-                       rule.AppliesToAsset(assetPath) && rule.Context == NamingRule.RuleContext.Prefix) ||
+            return NamingRules.Where(rule => rule != null).Any(rule =>
+                       rule.AppliesToAsset(assetPath) &&
+                       rule.Context == NamingRule.RuleContext.Prefix) ||
                    defaultPrefixesEnabled;
         }
 
@@ -152,7 +153,7 @@ namespace Ninito.UnityProjectLinter.LintingRules
         public bool IsThereSuffixRuleForAsset(string assetPath)
         {
             if (requireVariantSuffix && AssetDatabaseUtilities.IsAssetPrefab(assetPath)) return true;
-            return NamingRules.Any(rule =>
+            return NamingRules.Where(rule => rule != null).Any(rule =>
                 rule.AppliesToAsset(assetPath) && rule.Context == NamingRule.RuleContext.Suffix);
         }
 
@@ -222,7 +223,7 @@ namespace Ninito.UnityProjectLinter.LintingRules
         /// <returns>The desired fix for the desired asset</returns>
         private string GetFixForAsset(string assetPath, NamingRule.RuleContext fixContext)
         {
-            return NamingRules
+            return NamingRules.Where(rule => rule != null)
                 .FirstOrDefault(namingRule =>
                     namingRule.AppliesToAsset(assetPath) && namingRule.Context == fixContext)
                 ?.GetFixForAsset(assetPath);
@@ -235,8 +236,10 @@ namespace Ninito.UnityProjectLinter.LintingRules
         /// <returns>Whether the asset path is ignored</returns>
         private bool IsIgnored(string assetPath)
         {
-            return ignoredPaths.Any(assetPath.Contains) ||
-                   IgnoredAssets.Contains(AssetDatabase.LoadAssetAtPath<Object>(assetPath));
+            return ignoredPaths.Where(path => !String.IsNullOrEmpty(path) && !String.IsNullOrWhiteSpace(path))
+                       .Any(assetPath.Contains) ||
+                   IgnoredAssets.Where(asset => asset != null)
+                       .Contains(AssetDatabase.LoadAssetAtPath<Object>(assetPath));
         }
 
         #endregion
