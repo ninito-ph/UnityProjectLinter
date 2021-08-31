@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2021-08-30
+### Fixed
+- Fixed null reference exception in asset renamer window.
+
 ## [1.0.2] - 2021-08-30
 ### Fixed
 - Improved performance in asset renamer window.
