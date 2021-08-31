@@ -109,7 +109,7 @@ namespace Ninito.UnityProjectLinter
             DrawRenameButton();
 
             EditorGUILayout.EndHorizontal();
-            
+
             EditorGUILayout.Space(10f);
         }
 
@@ -221,7 +221,14 @@ namespace Ninito.UnityProjectLinter
                     ChangeGUIColor(new Color(0.75f, 0.75f, 0.75f));
                 }
 
-                _newAssetNames[index] = EditorGUILayout.TextField(_newAssetNames[index]);
+                if (IsRenameSafe(index))
+                {
+                    _newAssetNames[index] = EditorGUILayout.TextField(_newAssetNames[index]);
+                }
+                else
+                {
+                    EditorGUILayout.LabelField("Asset cannot be renamed currently.");
+                }
 
                 RestoreGUIColor();
             }
