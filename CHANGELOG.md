@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] - 2021-08-31
+### Fixed
+- Fixed bug where _Variant prefab rule would not be checked properly
+
 ## [1.0.4] - 2021-08-31
 ### Added
 - Added progress bar when renaming assets
