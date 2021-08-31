@@ -13,7 +13,7 @@ namespace Ninito.UnityProjectLinter.LintingRules
         menuName = CreateAssetMenus.AssetLintingSettingsMenuName, order = CreateAssetMenus.AssetLintingSettingsOrder)]
     public class AssetLintingSettings : ScriptableObject
     {
-        #region Private Methods
+        #region Private Fields
 
         [Header("General Settings")]
         [SerializeField]
@@ -100,7 +100,7 @@ namespace Ninito.UnityProjectLinter.LintingRules
 
             if (IsThereSuffixRuleForAsset(assetPath))
             {
-                assetName += GetSuffixOfAsset(assetName);
+                assetName += GetSuffixOfAsset(assetPath);
             }
 
             return assetName;
@@ -196,9 +196,9 @@ namespace Ninito.UnityProjectLinter.LintingRules
         {
             string suffix = String.Empty;
 
-            if (requireVariantSuffix && AssetDatabaseUtilities.IsAssetPrefab(assetPath, out GameObject prefab))
+            if (ShouldHaveVariantSuffix(assetPath))
             {
-                suffix += PrefabUtility.IsPartOfVariantPrefab(prefab) ? "_Variant" : "";
+                suffix = "_Variant";
             }
 
             string customSuffix = GetFixForAsset(assetPath, NamingRule.RuleContext.Suffix);
@@ -215,6 +215,17 @@ namespace Ninito.UnityProjectLinter.LintingRules
 
         #region Private Methods
 
+        /// <summary>
+        ///     Gets whether an assets should have the _Variant suffix
+        /// </summary>
+        /// <param name="assetPath">The path of asset to check</param>
+        /// <returns></returns>
+        private bool ShouldHaveVariantSuffix(string assetPath)
+        {
+            return AssetDatabaseUtilities.IsAssetPrefab(assetPath, out GameObject prefab) &&
+                   PrefabUtility.IsPartOfVariantPrefab(prefab) && requireVariantSuffix;
+        }
+        
         /// <summary>
         ///     Gets the prefix or suffix for an asset
         /// </summary>
