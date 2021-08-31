@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Ninito.UnityProjectLinter.Editor;
 using Ninito.UnityProjectLinter.LintingRules;
 using Ninito.UnityProjectLinter.Utilities;
@@ -17,11 +18,13 @@ namespace Ninito.UnityProjectLinter
     {
         #region Private Fields
 
-        private Object[] _assetsToBeRenamed;
         private string[] _newAssetNames;
         private string[] _suggestedAssetNames;
+        private Object[] _assetsToBeRenamed;
         private bool[] _shouldRenameAsset;
         private Vector2 _scrollPosition;
+        private int _currentPage;
+        private const int _pageLenght = 23;
 
         #endregion
 
@@ -53,6 +56,7 @@ namespace Ninito.UnityProjectLinter
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndScrollView();
 
+            DrawPageControls();
             DrawButtons();
         }
 
@@ -80,6 +84,47 @@ namespace Ninito.UnityProjectLinter
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        ///     Draws the pagination controls
+        /// </summary>
+        private void DrawPageControls()
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUI.BeginDisabledGroup(_currentPage <= 0);
+
+            if (GUILayout.Button("Previous Page"))
+            {
+                _currentPage--;
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            GUIStyle centeredStyle = GUI.skin.GetStyle("Label");
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUILayout.Label($"Page {_currentPage + 1} of {GetPageCount() + 1}", centeredStyle);
+
+            EditorGUI.BeginDisabledGroup(_currentPage >= GetPageCount());
+
+            if (GUILayout.Button("Next Page"))
+            {
+                _currentPage++;
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        /// <summary>
+        ///     Gets the total page count of the assets to be renamed
+        /// </summary>
+        /// <returns>The total page count of the assets to be renamed</returns>
+        private int GetPageCount()
+        {
+            return (int)Mathf.Ceil(AssetPathsToRename.Length / (float)_pageLenght) - 1;
+        }
 
         /// <summary>
         ///     Initializes the asset renamer's arrays
@@ -154,6 +199,10 @@ namespace Ninito.UnityProjectLinter
 
             for (int index = 0; index < AssetPathsToRename.Length; index++)
             {
+                EditorUtility.DisplayProgressBar("Renaming Assets",
+                    $"Renaming {_assetsToBeRenamed[index]} to {_newAssetNames[index]}...",
+                    AssetPathsToRename.Length / (float)index);
+
                 if (!IsRenameValid(index) || !IsRenameSafe(index))
                 {
                     skippedAssets++;
@@ -172,6 +221,7 @@ namespace Ninito.UnityProjectLinter
                 }
             }
 
+            EditorUtility.ClearProgressBar();
             GetWindow<AssetRenamerWindow>().Close();
             Debug.Log(
                 $"Renamed <b>{renamedAssets} asset(s)</b>, skipped <b>{skippedAssets} asset(s)</b>, and failed to rename <b>{failedToRenameAssets} asset(s).</b>");
@@ -184,8 +234,19 @@ namespace Ninito.UnityProjectLinter
         /// <returns>Whether the rename is valid</returns>
         private bool IsRenameValid(int index)
         {
-            return !String.IsNullOrEmpty(_newAssetNames[index]) && !String.IsNullOrEmpty(AssetPathsToRename[index]) &&
+            return !String.IsNullOrEmpty(_newAssetNames[index]) &&
+                   !String.IsNullOrEmpty(AssetPathsToRename[index]) &&
                    IsNewNameDifferent(index);
+        }
+
+        /// <summary>
+        ///     Checks whether a file name is valid
+        /// </summary>
+        /// <param name="filename">The filename to check</param>
+        /// <returns>Whether the filename is valid</returns>
+        private static bool IsValidFilename(string filename)
+        {
+            return filename.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
         }
 
         /// <summary>
@@ -217,16 +278,21 @@ namespace Ninito.UnityProjectLinter
 
             EditorGUILayout.LabelField("New Name", EditorStyles.boldLabel);
 
-            for (int index = 0; index < _newAssetNames.Length; index++)
+            OnCurrentPageIndexes((newName, suggestedName, asset, index)
+                =>
             {
-                if (!IsNewNameDifferent(index))
+                if (!IsValidFilename(newName))
+                {
+                    ChangeGUIColor(EditorColors.ErrorRed);
+                }
+                else if (!IsNewNameDifferent(index))
                 {
                     ChangeGUIColor(new Color(0.75f, 0.75f, 0.75f));
                 }
 
                 if (IsRenameSafe(index))
                 {
-                    _newAssetNames[index] = EditorGUILayout.TextField(_newAssetNames[index]);
+                    _newAssetNames[index] = EditorGUILayout.TextField(newName);
                 }
                 else
                 {
@@ -234,7 +300,7 @@ namespace Ninito.UnityProjectLinter
                 }
 
                 RestoreGUIColor();
-            }
+            });
 
             EditorGUILayout.EndVertical();
         }
@@ -250,10 +316,11 @@ namespace Ninito.UnityProjectLinter
 
             EditorGUI.BeginDisabledGroup(true);
 
-            for (int index = 0; index < AssetPathsToRename.Length; index++)
+            OnCurrentPageIndexes((newName, suggestedName, asset, index)
+                =>
             {
-                EditorGUILayout.TextField(_suggestedAssetNames[index]);
-            }
+                EditorGUILayout.TextField(suggestedName);
+            });
 
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndVertical();
@@ -270,17 +337,19 @@ namespace Ninito.UnityProjectLinter
 
             EditorGUI.BeginDisabledGroup(true);
 
-            for (int index = 0; index < AssetPathsToRename.Length; index++)
+            OnCurrentPageIndexes((newName, suggestedName, asset, index)
+                =>
             {
                 if (!IsRenameSafe(index))
                 {
                     ChangeGUIColor(EditorColors.ErrorRed);
                 }
 
-                EditorGUILayout.ObjectField(_assetsToBeRenamed[index], typeof(Object), false);
+                EditorGUILayout.ObjectField(asset, typeof(Object), false);
 
                 RestoreGUIColor();
-            }
+            });
+
 
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndVertical();
@@ -294,6 +363,22 @@ namespace Ninito.UnityProjectLinter
             for (int index = 0; index < _newAssetNames.Length; index++)
             {
                 _newAssetNames[index] = _suggestedAssetNames[index];
+            }
+        }
+
+        /// <summary>
+        ///     Performs an action of the currently displayed indexes of the current page
+        /// </summary>
+        /// <param name="newNameSuggestedNameAsset">The action to perform upon the current index</param>
+        private void OnCurrentPageIndexes(System.Action<string, string, Object, int> newNameSuggestedNameAsset)
+        {
+            int startIndex = Mathf.Max(_pageLenght * _currentPage - 1, 0);
+            int endIndex = Mathf.Min(startIndex + _pageLenght, AssetPathsToRename.Length - 1);
+
+            for (int index = startIndex; index < endIndex; index++)
+            {
+                newNameSuggestedNameAsset(_newAssetNames[index], _suggestedAssetNames[index], _assetsToBeRenamed[index],
+                    index);
             }
         }
 
