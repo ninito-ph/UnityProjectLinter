@@ -88,6 +88,7 @@ namespace Ninito.UnityProjectLinter
         {
             _newAssetNames = new string[AssetPathsToRename.Length];
             _suggestedAssetNames = new string[AssetPathsToRename.Length];
+            _assetsToBeRenamed = new Object[AssetPathsToRename.Length];
 
             for (int index = 0; index < AssetPathsToRename.Length; index++)
             {
