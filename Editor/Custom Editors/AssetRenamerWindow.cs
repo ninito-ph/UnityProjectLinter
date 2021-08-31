@@ -17,6 +17,7 @@ namespace Ninito.UnityProjectLinter
     {
         #region Private Fields
 
+        private Object[] _assetsToBeRenamed;
         private string[] _newAssetNames;
         private string[] _suggestedAssetNames;
         private bool[] _shouldRenameAsset;
@@ -71,7 +72,7 @@ namespace Ninito.UnityProjectLinter
             window.AssetPathsToRename = assetPathsToRename;
             window.titleContent = new GUIContent("Asset Renamer");
 
-            window.InitializeAssetNames();
+            window.InitializeAssetRenamer();
 
             window.Show();
         }
@@ -81,15 +82,16 @@ namespace Ninito.UnityProjectLinter
         #region Private Methods
 
         /// <summary>
-        ///     Initializes the asset names arrays
+        ///     Initializes the asset renamer's arrays
         /// </summary>
-        private void InitializeAssetNames()
+        private void InitializeAssetRenamer()
         {
             _newAssetNames = new string[AssetPathsToRename.Length];
             _suggestedAssetNames = new string[AssetPathsToRename.Length];
 
             for (int index = 0; index < AssetPathsToRename.Length; index++)
             {
+                _assetsToBeRenamed[index] = AssetDatabase.LoadAssetAtPath<Object>(AssetPathsToRename[index]);
                 _newAssetNames[index] = AssetNameUtility.GetAssetNameByPath(AssetPathsToRename[index]);
                 _suggestedAssetNames[index] = LintingSettings.GetSuggestedNameFor(AssetPathsToRename[index]);
             }
@@ -274,9 +276,7 @@ namespace Ninito.UnityProjectLinter
                     ChangeGUIColor(EditorColors.ErrorRed);
                 }
 
-                EditorGUILayout.ObjectField(AssetDatabase.LoadAssetAtPath<Object>(AssetPathsToRename[index]),
-                    typeof(Object),
-                    false);
+                EditorGUILayout.ObjectField(_assetsToBeRenamed[index], typeof(Object), false);
 
                 RestoreGUIColor();
             }
