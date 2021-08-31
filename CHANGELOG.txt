@@ -1,7 +1,0 @@
-Version 1.0.1
-    New Features:
-    * Improved UX when asset cannot be renamed currently.
-    Bug fixes:
-    * Fixed null reference exception errors when a null custom naming rule was added.
-    * Fixed all assets being ignored when an empty path was added to the ignored paths.
-    * Fixed null reference exception errors when a null asset was ignored.
