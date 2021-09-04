@@ -96,6 +96,7 @@ namespace Ninito.UnityProjectLinter
 
             if (GUILayout.Button("Previous Page"))
             {
+                GUI.FocusControl(null);
                 _currentPage--;
             }
 
@@ -109,6 +110,7 @@ namespace Ninito.UnityProjectLinter
 
             if (GUILayout.Button("Next Page"))
             {
+                GUI.FocusControl(null);
                 _currentPage++;
             }
 
