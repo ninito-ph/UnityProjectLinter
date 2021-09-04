@@ -3,6 +3,11 @@
 <p align="center">
   <a href="https://github.com/ninito-ph/UnityProjectLinter">
     <img src="https://i.imgur.com/RS1Tymp.png" alt="Unity Project Linter" width="549" height="314">
+    <p align="center">
+    <img alt="GitHub tag (latest SemVer)" src="https://img.shields.io/github/v/tag/ninito-ph/UnityProjectLinter?label=version&style=for-the-badge">
+    <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/ninito-ph/UnityProjectLinter?label=size&style=for-the-badge">
+    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/ninito-ph/UnityProjectLinter?style=for-the-badge">
+    </p>
   </a>
 
 
