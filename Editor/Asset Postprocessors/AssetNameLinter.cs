@@ -49,7 +49,7 @@ namespace Ninito.UnityProjectLinter
         /// <returns>All asset paths in the project</returns>
         public static IEnumerable<string> GetAllAssetPaths()
         {
-            return AssetDatabase.FindAssets("", new[] { "Assets/" })
+            return AssetDatabase.FindAssets("", new[] { "Assets" })
                 .Select(AssetDatabase.GUIDToAssetPath).Where(assetPath => assetPath.Contains("."));
         }
 
