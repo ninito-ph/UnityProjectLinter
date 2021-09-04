@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 2021-09-04
+### Fixed
+- Fixed bug where Assets folder path was written incorrectly, resulting in inability to obtain project assets.
+- Fixed bug where GUI focus would remain on a field after changing pages in the Asset Renamer Window, resulting in an incorrect display of information.
+
 ## [1.0.5] - 2021-08-31
 ### Fixed
 - Fixed bug where _Variant prefab rule would not be checked properly
