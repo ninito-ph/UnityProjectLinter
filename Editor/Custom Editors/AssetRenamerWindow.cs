@@ -248,6 +248,7 @@ namespace Ninito.UnityProjectLinter
         /// <returns>Whether the filename is valid</returns>
         private static bool IsValidFilename(string filename)
         {
+            if (filename == null) return false;
             return filename.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
         }
 
