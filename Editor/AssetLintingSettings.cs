@@ -176,10 +176,9 @@ namespace Ninito.UnityProjectLinter.LintingRules
         public string GetPrefixOfAsset(string assetPath)
         {
             string customRulePrefix = GetFixForAsset(assetPath, NamingRule.RuleContext.Prefix);
-
             if (!String.IsNullOrEmpty(customRulePrefix)) return customRulePrefix;
 
-            string assetTypeName = AssetDatabase.GetMainAssetTypeAtPath(assetPath).Name;
+            string assetTypeName = AssetDatabase.GetMainAssetTypeAtPath(assetPath)?.Name;
 
             Regex defaultRegex = new Regex(defaultPrefixRegex);
             string defaultPrefix = defaultRegex.GetAllMatchesAsString(assetTypeName);
