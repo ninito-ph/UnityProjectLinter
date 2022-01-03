@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Ninito.UnityProjectLinter.Utilities;
@@ -9,8 +10,6 @@ using Object = UnityEngine.Object;
 
 namespace Ninito.UnityProjectLinter.LintingRules
 {
-    [CreateAssetMenu(fileName = CreateAssetMenus.AssetLintingSettingsFileName,
-        menuName = CreateAssetMenus.AssetLintingSettingsMenuName, order = CreateAssetMenus.AssetLintingSettingsOrder)]
     public class AssetLintingSettings : ScriptableObject
     {
         #region Private Fields
@@ -212,6 +211,29 @@ namespace Ninito.UnityProjectLinter.LintingRules
 
         #endregion
 
+        #region Internal Methods
+
+        /// <summary>
+        /// Gets or creates event import settings.
+        /// </summary>
+        internal static AssetLintingSettings GetOrCreateSettings()
+        {
+            AssetLintingSettings settings = Resources.Load("EventImporterSettings") as AssetLintingSettings;
+            settings ??= CreateSettings();
+
+            return settings;
+        }
+        
+        /// <summary>
+        /// Gets or creates event import settings as a serialized object.
+        /// </summary>
+        internal static SerializedObject GetOrCreateSerializedSettings()
+        {
+            return new SerializedObject(GetOrCreateSettings());
+        }
+
+        #endregion
+        
         #region Private Methods
 
         /// <summary>
@@ -250,6 +272,28 @@ namespace Ninito.UnityProjectLinter.LintingRules
                        .Any(assetPath.Contains) ||
                    IgnoredAssets.Where(asset => asset != null)
                        .Contains(AssetDatabase.LoadAssetAtPath<Object>(assetPath));
+        }
+        
+        /// <summary>
+        /// Creates a new settings object.
+        /// </summary>
+        /// <returns>The newly created settings object</returns>
+        private static AssetLintingSettings CreateSettings()
+        {
+            if (!Directory.Exists("Assets/Resources"))
+            {
+                Directory.CreateDirectory("Assets/Resources");
+            }
+
+            if (!Directory.Exists("Assets/Resources/Editor"))
+            {
+                Directory.CreateDirectory("Assets/Resources/Editor");
+            }
+            
+            AssetLintingSettings settings = CreateInstance<AssetLintingSettings>();
+            AssetDatabase.CreateAsset(settings, "Assets/Resources/Editor/EventImporterSettings.asset");
+            AssetDatabase.SaveAssets();
+            return settings;
         }
 
         #endregion
