@@ -5,6 +5,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.1.0] - Q1 2022
+### Added
+- Basic API for CI/CD support
+- Test Runner test for checking if all assets are named correctly if you want to take advantage of your already-existing test CI/CD pipeline
+- RulesetOverride ScriptableObject to allow you to override linting rules in specific folders
+- Improved asset renamer tool
+- Basic rule exception support
+
+## [2.0.0] - 2022-01-27
+### Added
+- Logger selection dropdown interface
+- CSV Asset Violation Logger
+- Default rules as individual, customizable ScriptableObjects (SimplePrefixNamingRule, RegexNamingRule, VariantSuffixNamingRule and ReplaceSectionNamingRule)
+- Support for rule priority, to decide which rule will be considered if two rules apply to an asset
+- Support for Infix rule context, to check that an asset's name, not just its prefix/suffix, follows appropriate conventions
+### Changed
+- Made UnityProjectLinter settings an actual SettingsProvider that can be found in Project Settings
+- Improved custom logger support; now you should be able to simply create a class that implements IRuleViolationLogger and it will automatically show up in the logger selection dropdown
+- Moved scripts to new Ninito.UnityProjectLinter.Editor asmdef
+- Moved default/sample rules to Ninito.UnityProjectLinter.Editor.Samples asmdef
+- Refactored the whole project's codebase for greater extensibility and readability
+### Removed
+- Default hardcoded rules, except for ignoring script assets (Default rules have been replaced by more modular and extensible ScriptableObjects in the Samples folder).
 
 ## [1.0.7] - 2021-09-08
 ### Fixed
