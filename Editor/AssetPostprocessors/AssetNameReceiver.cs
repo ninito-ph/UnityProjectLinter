@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Ninito.UnityProjectLinter.LintingRules;
-using Ninito.UnityProjectLinter.Logging;
-using Ninito.UnityProjectLinter.Utilities;
+using Ninito.UnityProjectLinter.Editor.Linter;
+using Ninito.UnityProjectLinter.Editor.Logging;
+using Ninito.UnityProjectLinter.Editor.Settings;
+using Ninito.UnityProjectLinter.Editor.Utilities;
 using UnityEditor;
 using UnityEngine;
 
-namespace Ninito.UnityProjectLinter
+namespace Ninito.UnityProjectLinter.Editor.AssetPostprocessors
 {
     /// <summary>
     ///     An asset PostProcessor that ensures all assets are named correctly
