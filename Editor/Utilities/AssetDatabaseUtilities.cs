@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Ninito.UnityProjectLinter.Utilities
+namespace Ninito.UnityProjectLinter.Editor.Utilities
 {
     /// <summary>
     ///     An class containing utility functions for AssetDatabase
@@ -19,16 +19,6 @@ namespace Ninito.UnityProjectLinter.Utilities
         {
             prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
             return prefab != null;
-        }
-
-        /// <summary>
-        ///     Gets an asset's GUID
-        /// </summary>
-        /// <param name="asset">The asset to get the GUID of</param>
-        /// <returns>The GUID of the given asset</returns>
-        public static string GetAssetGUID(Object asset)
-        {
-            return AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(asset));
         }
 
         /// <summary>

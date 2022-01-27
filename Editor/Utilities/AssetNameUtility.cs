@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Ninito.UnityProjectLinter.Utilities
+namespace Ninito.UnityProjectLinter.Editor.Utilities
 {
     /// <summary>
     ///     An utility that handles asset names
@@ -14,7 +14,7 @@ namespace Ninito.UnityProjectLinter.Utilities
         /// <returns>The asset's name</returns>
         public static string GetAssetNameByPath(string desiredAssetPath)
         {
-            var nameRegex = new Regex(@"[^\/]+(?=\.[^\/.]*$)");
+            Regex nameRegex = new Regex(@"[^\/]+(?=\.[^\/.]*$)");
             return nameRegex.Match(desiredAssetPath).ToString();
         }
         
