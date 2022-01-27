@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Ninito.UnityProjectLinter.Utilities
+namespace Ninito.UnityProjectLinter.Editor.Utilities
 {
     /// <summary>
     ///     An utility that handles asset names

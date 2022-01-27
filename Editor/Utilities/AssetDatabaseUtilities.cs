@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Ninito.UnityProjectLinter.Utilities
+namespace Ninito.UnityProjectLinter.Editor.Utilities
 {
     /// <summary>
     ///     An class containing utility functions for AssetDatabase
