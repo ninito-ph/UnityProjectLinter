@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Ninito.UnityProjectLinter.Editor
+namespace Ninito.Whetstone.Editor
 {
     public static class EditorColors
     {
