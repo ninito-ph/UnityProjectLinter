@@ -38,13 +38,15 @@ Unity Project Linter is a simple tool that allows you to ensure asset naming con
 <img src="https://i.imgur.com/16zFl1U.gif" alt="Unity Project Linter" width="550" height="418">
 
 Here are its features:
-* Ensure assets names have the necessary prefixes and suffixes.
-* Ensure asset names don't have spaces.
+* Ensure assets names have the necessary prefixes, infixes and suffixes.
+* Ensure asset names don't have certain characters, such as spaces.
 * Customize existing rules easily.
-* Create new naming rules, even for complex cases, by extending the NamingRule class.
+* Create new naming rules, even for complex cases, by extending the simple NamingRule class.
+* Handle multiple competing rules by assigning them differing priorities.
 * Ignore individual assets or entire folders from naming rules.
 * Receive console warnings when an asset is renamed or created and does not match naming rules.
 * Export a log of assets that violate naming rules.
+* Create custom log exporters for asset naming violation, such as text loggers and csv loggers.
 * Mass-rename assets that violate rules.
 
 
