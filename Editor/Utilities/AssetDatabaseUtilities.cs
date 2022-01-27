@@ -22,16 +22,6 @@ namespace Ninito.UnityProjectLinter.Utilities
         }
 
         /// <summary>
-        ///     Gets an asset's GUID
-        /// </summary>
-        /// <param name="asset">The asset to get the GUID of</param>
-        /// <returns>The GUID of the given asset</returns>
-        public static string GetAssetGUID(Object asset)
-        {
-            return AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(asset));
-        }
-
-        /// <summary>
         ///     Gets whether an asset is a prefab
         /// </summary>
         /// <param name="assetPath">The asset path to check in</param>
