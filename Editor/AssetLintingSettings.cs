@@ -1,109 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Ninito.UnityProjectLinter.Utilities;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Ninito.UnityProjectLinter.LintingRules
 {
-    public class AssetLintingSettings : ScriptableObject
+    public sealed class AssetLintingSettings : ScriptableObject
     {
         #region Private Fields
 
         [Header("General Settings")]
         [SerializeField]
-        private bool enabled = true;
-
-        [SerializeField]
         [Tooltip("Whether to send a warning on the console when an asset is named incorrectly.")]
-        private bool warnOnIncorrect = true;
+        public bool WarnOnIncorrect = true;
 
         [Header("Default Rules")]
         [SerializeField]
-        [Tooltip("Whether non-ignored assets should have prefixes, generated using the default prefix Regex.")]
-        private bool defaultPrefixesEnabled = true;
-
-        [SerializeField]
-        [Tooltip(
-            "The Regex that generates default prefixes. It will receive the asset's type as an input, and output all captures as the prefix, followed by an underscore. Refer to the preview box below.")]
-        private string defaultPrefixRegex = @"[A-Z0-9]";
-
-        [SerializeField]
-        [Tooltip("Whether to require the _Variant suffix on variant prefabs.")]
-        private bool requireVariantSuffix = true;
-
-        [SerializeField]
-        [Tooltip("Whether spaces should be allowed in asset names.")]
-        private bool allowSpaces;
-
-        [SerializeField]
         [Tooltip("Whether script assets should be ignored from the linting process.")]
-        private bool ignoreScriptAssets = true;
+        public bool IgnoreScriptAssets = true;
 
         [SerializeField]
         [Tooltip("Custom naming rules to lint assets with.")]
-        private List<NamingRule> namingRules = new List<NamingRule>();
+        public List<NamingRule> NamingRules = new List<NamingRule>();
 
         [SerializeField]
         [Tooltip("The ignored paths (folders). Assets inside ignored folders and their subfolders won't be linted.")]
-        private List<string> ignoredPaths = new List<string>();
+        public List<string> IgnoredPaths = new List<string>();
 
         [SerializeField]
         [Tooltip("The ignored assets. These assets will not be linted.")]
-        private List<Object> ignoredAssets = new List<Object>();
+        public List<Object> IgnoredAssets = new List<Object>();
 
         #endregion
 
-        #region Properties
+        #region Internal Methods
 
-        public IEnumerable<NamingRule> NamingRules => namingRules;
+        /// <summary>
+        /// Gets or creates event import settings.
+        /// </summary>
+        internal static AssetLintingSettings GetOrCreateSettings()
+        {
+            AssetLintingSettings settings =
+                Resources.Load("Editor/ALS_UnityProjectLinterSettings") as AssetLintingSettings;
 
-        public bool WarnOnIncorrect => warnOnIncorrect;
+            settings ??= CreateSettings();
 
-        public bool Enabled => enabled;
+            return settings;
+        }
 
-        public bool AllowSpaces => allowSpaces;
-
-        public List<string> IgnoredPaths => ignoredPaths;
-
-        public List<Object> IgnoredAssets => ignoredAssets;
+        /// <summary>
+        /// Gets or creates event import settings as a serialized object.
+        /// </summary>
+        internal static SerializedObject GetSerializedSettings()
+        {
+            return new SerializedObject(GetOrCreateSettings());
+        }
 
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        ///     Gets the suggested name of an asset
-        /// </summary>
-        /// <param name="assetPath">The path of the asset to get a suggested name for</param>
-        /// <returns>The suggested name for the asset</returns>
-        public string GetSuggestedNameFor(string assetPath)
-        {
-            string assetName = AssetNameUtility.GetAssetNameByPath(assetPath);
-
-            if (!AllowSpaces)
-            {
-                assetName = assetName.Replace(" ", "");
-            }
-
-            assetName = assetName.Replace("_", "");
-
-            if (IsTherePrefixRuleForAsset(assetPath))
-            {
-                assetName = assetName.Insert(0, GetPrefixOfAsset(assetPath));
-            }
-
-            if (IsThereSuffixRuleForAsset(assetPath))
-            {
-                assetName += GetSuffixOfAsset(assetPath);
-            }
-
-            return assetName;
-        }
 
         /// <summary>
         ///     Ignores a new path
@@ -126,154 +82,10 @@ namespace Ninito.UnityProjectLinter.LintingRules
             IgnoredAssets.Add(loadedAsset);
         }
 
-        /// <summary>
-        ///     Whether a prefix rule exists for the asset at the given path
-        /// </summary>
-        /// <param name="assetPath">The path of the asset to check for</param>
-        /// <returns>Whether a prefix rule for the asset at the given path exists</returns>
-        public bool IsTherePrefixRuleForAsset(string assetPath)
-        {
-            if (ignoreScriptAssets && AssetDatabaseUtilities.IsScriptAsset(assetPath))
-            {
-                return false;
-            }
-
-            return NamingRules.Where(rule => rule != null).Any(rule =>
-                       rule.AppliesToAsset(assetPath) &&
-                       rule.Context == NamingRule.RuleContext.Prefix) ||
-                   defaultPrefixesEnabled;
-        }
-
-        /// <summary>
-        ///     Whether a suffix rule exists for the asset at the given path
-        /// </summary>
-        /// <param name="assetPath">The path of the asset to check for</param>
-        /// <returns>Whether a suffix rule for the asset at the given path exists</returns>
-        public bool IsThereSuffixRuleForAsset(string assetPath)
-        {
-            if (requireVariantSuffix && AssetDatabaseUtilities.IsAssetPrefab(assetPath)) return true;
-            return NamingRules.Where(rule => rule != null).Any(rule =>
-                rule.AppliesToAsset(assetPath) && rule.Context == NamingRule.RuleContext.Suffix);
-        }
-
-        /// <summary>
-        ///     Checks whether a rule for the asset at the given path exists
-        /// </summary>
-        /// <param name="assetPath">The path of the asset to check for</param>
-        /// <returns>Whether a rule for the asset at the given path exists</returns>
-        public bool IsThereRuleForAsset(string assetPath)
-        {
-            if (IsIgnored(assetPath)) return false;
-            return IsTherePrefixRuleForAsset(assetPath) || IsThereSuffixRuleForAsset(assetPath);
-        }
-
-        /// <summary>
-        ///     Gets the prefix of an asset
-        /// </summary>
-        /// <param name="assetPath">The path of the asset to get the prefix of</param>
-        /// <returns>The prefix of the asset at the given path</returns>
-        public string GetPrefixOfAsset(string assetPath)
-        {
-            string customRulePrefix = GetFixForAsset(assetPath, NamingRule.RuleContext.Prefix);
-            if (!String.IsNullOrEmpty(customRulePrefix)) return customRulePrefix;
-
-            string assetTypeName = AssetDatabase.GetMainAssetTypeAtPath(assetPath)?.Name;
-
-            Regex defaultRegex = new Regex(defaultPrefixRegex);
-            string defaultPrefix = defaultRegex.GetAllMatchesAsString(assetTypeName);
-
-            return defaultPrefix + "_";
-        }
-
-        /// <summary>
-        ///     Gets the suffix of an asset
-        /// </summary>
-        /// <param name="assetPath">The path of the asset to get the suffix of</param>
-        /// <returns>The suffix of the asset at the given path</returns>
-        public string GetSuffixOfAsset(string assetPath)
-        {
-            string suffix = String.Empty;
-
-            if (ShouldHaveVariantSuffix(assetPath))
-            {
-                suffix = "_Variant";
-            }
-
-            string customSuffix = GetFixForAsset(assetPath, NamingRule.RuleContext.Suffix);
-
-            if (customSuffix != null)
-            {
-                suffix += customSuffix;
-            }
-
-            return suffix;
-        }
-
         #endregion
 
-        #region Internal Methods
-
-        /// <summary>
-        /// Gets or creates event import settings.
-        /// </summary>
-        internal static AssetLintingSettings GetOrCreateSettings()
-        {
-            AssetLintingSettings settings = Resources.Load("EventImporterSettings") as AssetLintingSettings;
-            settings ??= CreateSettings();
-
-            return settings;
-        }
-        
-        /// <summary>
-        /// Gets or creates event import settings as a serialized object.
-        /// </summary>
-        internal static SerializedObject GetOrCreateSerializedSettings()
-        {
-            return new SerializedObject(GetOrCreateSettings());
-        }
-
-        #endregion
-        
         #region Private Methods
 
-        /// <summary>
-        ///     Gets whether an assets should have the _Variant suffix
-        /// </summary>
-        /// <param name="assetPath">The path of asset to check</param>
-        /// <returns></returns>
-        private bool ShouldHaveVariantSuffix(string assetPath)
-        {
-            return AssetDatabaseUtilities.IsAssetPrefab(assetPath, out GameObject prefab) &&
-                   PrefabUtility.IsPartOfVariantPrefab(prefab) && requireVariantSuffix;
-        }
-        
-        /// <summary>
-        ///     Gets the prefix or suffix for an asset
-        /// </summary>
-        /// <param name="assetPath">The path for the desired asset</param>
-        /// <param name="fixContext">Whether the fix should be a prefix or suffix</param>
-        /// <returns>The desired fix for the desired asset</returns>
-        private string GetFixForAsset(string assetPath, NamingRule.RuleContext fixContext)
-        {
-            return NamingRules.Where(rule => rule != null)
-                .FirstOrDefault(namingRule =>
-                    namingRule.AppliesToAsset(assetPath) && namingRule.Context == fixContext)
-                ?.GetFixForAsset(assetPath);
-        }
-
-        /// <summary>
-        ///     Checks whether an asset path is ignored
-        /// </summary>
-        /// <param name="assetPath">The asset path to check for</param>
-        /// <returns>Whether the asset path is ignored</returns>
-        private bool IsIgnored(string assetPath)
-        {
-            return ignoredPaths.Where(path => !String.IsNullOrEmpty(path) && !String.IsNullOrWhiteSpace(path))
-                       .Any(assetPath.Contains) ||
-                   IgnoredAssets.Where(asset => asset != null)
-                       .Contains(AssetDatabase.LoadAssetAtPath<Object>(assetPath));
-        }
-        
         /// <summary>
         /// Creates a new settings object.
         /// </summary>
@@ -289,9 +101,9 @@ namespace Ninito.UnityProjectLinter.LintingRules
             {
                 Directory.CreateDirectory("Assets/Resources/Editor");
             }
-            
+
             AssetLintingSettings settings = CreateInstance<AssetLintingSettings>();
-            AssetDatabase.CreateAsset(settings, "Assets/Resources/Editor/EventImporterSettings.asset");
+            AssetDatabase.CreateAsset(settings, "Assets/Resources/Editor/ALS_UnityProjectLinterSettings.asset");
             AssetDatabase.SaveAssets();
             return settings;
         }
