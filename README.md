@@ -35,7 +35,7 @@
 
 Unity Project Linter is a simple tool that allows you to ensure asset naming conventions are being followed in your project.
   
-<img src="https://i.imgur.com/16zFl1U.gif" alt="Unity Project Linter" width="550" height="418">
+<img src="https://i.imgur.com/geAd2fT.gif" alt="Unity Project Linter" width="774" height="410">
 
 Here are its features:
 * Ensure assets names have the necessary prefixes, infixes and suffixes.
