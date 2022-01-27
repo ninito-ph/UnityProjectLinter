@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Ninito.UnityProjectLinter
+namespace Ninito.UnityProjectLinter.Editor.Extensions
 {
 	/// <summary>
 	///     An extension of Regex functions
