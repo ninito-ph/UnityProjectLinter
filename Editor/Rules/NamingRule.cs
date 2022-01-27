@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Ninito.UnityProjectLinter.Editor.Settings
+namespace Ninito.UnityProjectLinter.Editor.Rules
 {
     /// <summary>
     /// A naming rule that checks if an asset is named properly
