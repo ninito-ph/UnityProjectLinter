@@ -1,6 +1,6 @@
 {
-    "name": "Ninito.UnityProjectLinter",
-    "rootNamespace": "Ninito.UnityProjectLinter",
+    "name": "Ninito.UnityProjectLinter.Editor",
+    "rootNamespace": "Ninito.UnityProjectLinter.Editor",
     "references": [],
     "includePlatforms": [
         "Editor"
