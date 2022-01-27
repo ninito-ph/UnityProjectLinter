@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17f4b76b3afb438cb58c855c559d8048, type: 3}
+  m_Name: ALS_UnityProjectLinterSettings
+  m_EditorClassIdentifier: 
+  WarnOnIncorrect: 1
+  IgnoreScriptAssets: 1
+  NamingRules:
+  - {fileID: 11400000, guid: 9b2534a83260c844487d454c7d97f149, type: 2}
+  - {fileID: 11400000, guid: 28a0e3d258b1dc644a0166e5194c8110, type: 2}
+  - {fileID: 11400000, guid: a8aa9d4425187d646a2e8a326ea9f14c, type: 2}
+  IgnoredPaths:
+  - Assets/Resources
+  - Assets/UnityProjectLinter
+  IgnoredAssets: []
