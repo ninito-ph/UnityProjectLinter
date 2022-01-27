@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Ninito.UnityProjectLinter.LintingRules;
-using Ninito.UnityProjectLinter.Utilities;
+using Ninito.UnityProjectLinter.Editor.Settings;
+using Ninito.UnityProjectLinter.Editor.Utilities;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Ninito.UnityProjectLinter
+namespace Ninito.UnityProjectLinter.Editor.Linter
 {
 	/// <summary>
 	/// A class that reads and enforces naming rules
