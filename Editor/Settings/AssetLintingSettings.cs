@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Ninito.UnityProjectLinter.Editor.Rules;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;

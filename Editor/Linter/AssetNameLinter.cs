@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Ninito.UnityProjectLinter.Editor.Rules;
 using Ninito.UnityProjectLinter.Editor.Settings;
 using Ninito.UnityProjectLinter.Editor.Utilities;
 using UnityEditor;
-using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Ninito.UnityProjectLinter.Editor.Linter
