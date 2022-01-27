@@ -46,19 +46,19 @@ namespace Ninito.UnityProjectLinter.Editor.Linter
 		/// <returns>The suggested name for the asset</returns>
 		public static string GetSuggestedNameFor(string assetPath)
 		{
-			string assetName = AssetNameUtility.GetAssetNameByPath(assetPath).Replace("_", "");
+			string assetName = AssetNameUtility.GetAssetNameByPath(assetPath);
 
-			if (IsThereInfixRuleForAsset(assetPath))
+			if (!DoesAssetHaveExpectedInfix(assetPath))
 			{
 				assetName = GetSuggestedInfixFor(assetPath);
 			}
 
-			if (IsTherePrefixRuleForAsset(assetPath))
+			if (!DoesAssetHaveExpectedPrefix(assetPath))
 			{
 				assetName = assetName.Insert(0, GetSuggestedPrefixFor(assetPath));
 			}
 
-			if (IsThereSuffixRuleForAsset(assetPath))
+			if (!DoesAssetHaveExpectedSuffix(assetPath))
 			{
 				assetName += GetSuggestedSuffixFor(assetPath);
 			}

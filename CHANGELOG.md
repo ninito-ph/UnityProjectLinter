@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved asset renamer tool
 - Basic rule exception support
 
+## [2.0.1] - 2022-01-27
+### Added
+- Sample rules to samples folder
+- Preconfigured UnityProjectLinter settings to samples folder
+### Changed
+- Improved asset name suggestion; suggestions now detect existing prefixes/suffixes and will not repeat them
+
 ## [2.0.0] - 2022-01-27
 ### Added
 - Logger selection dropdown interface
